@@ -4,38 +4,59 @@ using System.Text;
 
 namespace test
 {
-    class Task_2
+    ///<summary>
+    /// Интерфейс транспорта 
+    ///</summary>
+    public interface ITransport
     {
-        interface ITransport
+        ///<summary>
+        /// Метод воспроизводящий действие с определенным видом транспорта
+        ///</summary>
+        void Move();
+    }
+    ///<summary>
+    /// Класс описывающий лодку
+    ///</summary>
+    public class Boat : ITransport
+    {
+        ///<summary>
+        /// Метод воспроизводящий действие с лодкой
+        ///</summary>
+        public void Move()
         {
-            void Move();
+            Console.WriteLine("плыть");
         }
-        class Boat : ITransport
+    }
+    ///<summary>
+    /// Класс описывающий машину
+    ///</summary>
+    public class Car : ITransport
+    {
+        ///<summary>
+        /// Метод воспроизводящий действие с машиной
+        ///</summary>
+        public void Move()
         {
-            public void Move()
-            {
-                Console.WriteLine("плыть");
-            }
+            Console.WriteLine("ехать");
         }
-        class Car : ITransport
+    }
+    ///<summary>
+    /// Класс описывающий самолет
+    ///</summary>
+    public class Аirplane : ITransport
+    {
+        ///<summary>
+        /// Метод воспроизводящий действие с самолетом
+        ///</summary>
+        public void Move()
         {
-            public void Move()
-            {
-                Console.WriteLine("ехать");
-            }
+            Console.WriteLine("лететь");
         }
-        class Аirplane : ITransport
-        {
-            public void Move()
-            {
-                Console.WriteLine("лететь");
-            }
-        }
-        static void Main(string[] args)
-        {
-            var obj = new Boat();
-            obj.Move();
+    }
+    public static void Main(string[] args)
+    {
+        var obj = new Boat();
+        obj.Move();
 
-        }
     }
 }
