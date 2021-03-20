@@ -68,7 +68,7 @@ namespace test
         ///</summary>
         public void Dispose()
         {
-
+            _iterator.Dispose();
         }
         ///<summary>
         /// Метод возвращающий итератор
@@ -96,14 +96,14 @@ namespace test
         ///</summary>
         public void Reset()
         {
-
+            _iterator.Reset();
         }
         ///<summary>
         /// 
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this;
         }
     }
     ///<summary>
@@ -142,7 +142,7 @@ namespace test
         ///</summary>
         public void Dispose()
         {
-
+            _iterator.Dispose();
         }
         ///<summary>
         /// Метод возвращающий итератор
@@ -163,14 +163,15 @@ namespace test
         ///</summary>
         public void Reset()
         {
-
+            _tempcount = 0;
+            _iterator.Reset();
         }
         ///<summary>
         /// 
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this;
         }
         ///<summary>
         /// Количество значений всего
@@ -200,7 +201,9 @@ namespace test
         ///</exception>
         public static IEnumerable<TSource> MyWhere<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            return (source!=null && predicate !=null)? new MyWhereIterator<TSource>(source, predicate): throw new ArgumentNullException();
+            if (source == null) throw new ArgumentNullException("Source null");
+            if (predicate == null) throw new ArgumentNullException("Predicate null");
+            return new MyWhereIterator<TSource>(source, predicate);
         }
         ///<summary>
         /// Метод приводящий итератор в начальное значение
@@ -216,7 +219,9 @@ namespace test
         ///</exception>
         public static IEnumerable<TSource> MyTake<TSource>(this IEnumerable<TSource> source, int count)
         {
-            return (source != null && count != default)? new MyTakeIterator<TSource>(source, count) : throw new ArgumentNullException();
+            if (source == null) throw new ArgumentNullException("Source null");
+            if (count == default) throw new ArgumentNullException("Count = 0");
+            return new MyTakeIterator<TSource>(source, count);
         }
     }
 
