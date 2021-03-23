@@ -108,9 +108,9 @@ namespace test
     ///<summary>
     /// Метод сохраняющий единицы измерения в БД
     ///</summary>
-    //public static void SavePathToDB<T>(string cargoID, IPath<T> path)
-    //        where T : struct, IPath
-    //{
+    public static void SavePathToDB<T>(string cargoID, IPath<T> path)
+            where T : struct, IPath
+    {
 
-    //}
+    }
 }
