@@ -17,6 +17,9 @@ namespace QueueTask.Test
         public int Value { get; set; }
     }
 
+    ///<summary>
+    /// Интерфейс описывающий работу очереди
+    ///</summary>
     public interface IQueue<T>: IEnumerable<T>, IEnumerator<T>
     {
         public int Count { get; }
@@ -24,93 +27,188 @@ namespace QueueTask.Test
         public T Dequeue();
 
     }
-
+    ///<summary>
+    /// Класс очереди
+    ///</summary>
     public class MyQueue<T> : IQueue<T>
     {
-        private Node<T> first;  
-        private Node<T> last;
+        ///<summary>
+        /// Подсчет количесва элементов
+        ///</summary>
+        ///<value>
+        /// Свойство Count возвращающий и приниающий значение в int 
+        ///</value>
         public int Count { get; private set; }
+        ///<summary>
+        /// Подсчет количесва элементов для установления порядка
+        ///</summary>
+        ///<value>
+        /// Свойство CountReset возвращающий и приниающий значение в int 
+        ///</value>
         private int CountReset { get; set; }
+        ///<summary>
+        /// Отображает версию очереди
+        ///</summary>
+        ///<value>
+        /// Свойство _version возвращающий и приниающий значение в int 
+        ///</value>
         private int _version { get; set; }
+        ///<summary>
+        /// Отображает версию очереди внутри методов
+        ///</summary>
+        ///<value>
+        /// Свойство _versioninside возвращающий и приниающий значение в int 
+        ///</value>
         private int _versioninside { get; set; }
-        public T Current => CurrentNote.item;
-        private Node<T> CurrentNote;
-
-        object IEnumerator.Current => Current;
-
+        ///<summary>
+        /// Внутренний класс описывающий структуру очереди
+        ///</summary>
         private class Node<T>
         {
+            ///<summary>
+            /// Значение элемента
+            ///</summary>
             public T item;
+            ///<summary>
+            /// Слудеющий элемент
+            ///</summary>
             public Node<T> next;
         }
+        ///<summary>
+        /// Конструктор очереди
+        ///</summary>
         public MyQueue()
         {
             first = null;
             last = null;
             Count = 0;
         }
+        ///<summary>
+        /// Проверка пустая ли очередь
+        ///</summary>
         public bool IsEmpty()
         {
+            ThrowIfDisposed();
             return first == null;
         }
+        ///<summary>
+        /// Добавление элемента в очередь
+        ///</summary>
         public void Enqueue(T item)
         {
+            ThrowIfDisposed();
+            if (item == null) throw new ArgumentNullException(nameof(item));
             Node<T> oldlast = last;
             last = new Node<T>();
             last.item = item;
             last.next = null;
-            if (IsEmpty()) first = last;
-            else oldlast.next = last;
+            if (IsEmpty())
+                first = last;
+            else 
+                oldlast.next = last;
             Count++;
             _version++;
-            CurrentNote = first;
+            _сurrentNote = first;
         }
-
+        ///<summary>
+        /// Удаление элемента из очереди
+        ///</summary>
         public T Dequeue()
         {
+            ThrowIfDisposed();
             if (IsEmpty()) throw new InvalidOperationException("Queue underflow");
             T item = first.item;
             first = first.next;
             Count--;
-            if (IsEmpty()) last = null;
-            CurrentNote = first;
+            if (IsEmpty()) 
+                last = null;
+            _сurrentNote = first;
             _version++;
             return item;
         }
-
+        ///<summary>
+        /// Воозвращение Enumerator
+        ///</summary>
         public IEnumerator<T> GetEnumerator()
         {
+            ThrowIfDisposed();
             _versioninside = _version;
             return this;
         }
-
+        ///<summary>
+        /// Воозвращение Enumerator
+        ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this.GetEnumerator();
         }
-
+        ///<summary>
+        /// Переход на следующий элемент
+        ///</summary>
         public bool MoveNext()
         {
+            ThrowIfDisposed();
             if (_versioninside != _version) throw new InvalidOperationException("Queue underflow");
-            if (CurrentNote==last) return false;
+            if (_сurrentNote == last) return false;
             if (CountReset==0)
             {
                 CountReset++;
                 return true;
             }
-            CurrentNote = CurrentNote.next;
+            _сurrentNote = _сurrentNote.next;
             return true;
         }
-
+        ///<summary>
+        /// Значения по уполчанию
+        ///</summary>
         public void Reset()
         {
+            ThrowIfDisposed();
             CountReset = 0;
-            CurrentNote = first;
+            _сurrentNote = first;
         }
-
+        ///<summary>
+        /// Очистка ресурсов
+        ///</summary>
         public void Dispose()
         {
+            _disposed = true;
+            first = null;
         }
+        ///<summary>
+        /// Проверка освобождены ли ресурсы
+        ///</summary>
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException("Ресурсы освобождены");
+            }
+        }
+        ///<summary>
+        /// Первый элемент очереди
+        ///</summary>
+        private Node<T> first;
+        ///<summary>
+        /// Последний элемент очереди
+        ///</summary>
+        private Node<T> last;
+        ///<summary>
+        /// Текущий элемент очереди в T
+        ///</summary>
+        public T Current => _сurrentNote.item;
+        ///<summary>
+        /// Текущий элемент очереди в Node
+        ///</summary>
+        private Node<T> _сurrentNote;
+        ///<summary>
+        /// Текущий элемент очереди в Object
+        ///</summary>
+        object IEnumerator.Current => Current;
+        ///<summary>
+        /// Освобожден ли ресурс
+        ///</summary>
+        private bool _disposed;
     }
 
 
