@@ -34,6 +34,77 @@ namespace test
     public class MyWhereIterator<T> : IEnumerable<T>, IEnumerator<T>
     {
         ///<summary>
+        /// Коструктор класса MyWhereIterator устанавливающий начальные значениия
+        ///</summary>
+        ///<param name="source">
+        /// Источник типа IEnumerable
+        ///</param>
+        ///<param name="func">
+        /// Делагат принимающий T и возвращающий bool
+        ///</param>
+        public MyWhereIterator(IEnumerable<T> source, Func<T, bool> func)
+        {
+            _iterator = source.GetEnumerator();
+            _func = func;
+            _disposed = false;
+        }
+        ///<summary>
+        /// Метод освобождения памяти
+        ///</summary>
+        public void Dispose()
+        {
+            _iterator.Dispose();
+        }
+        ///<summary>
+        /// Метод возвращающий итератор
+        ///</summary>
+        public IEnumerator<T> GetEnumerator()
+        {
+            ThrowIfDisposed();
+            return this;
+        }
+        ///<summary>
+        /// Метод перемещения между значениями
+        ///</summary>
+        public bool MoveNext()
+        {
+            ThrowIfDisposed();
+            while (_iterator.MoveNext())
+            {
+                if (_func(_iterator.Current))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        ///<summary>
+        /// Метод приводящий итератор в начальное значение
+        ///</summary>
+        public void Reset()
+        {
+            ThrowIfDisposed();
+            _iterator.Reset();
+        }
+        ///<summary>
+        /// 
+        ///</summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            ThrowIfDisposed();
+            return this;
+        }
+        ///<summary>
+        /// Проверка освобождены ли ресурсы
+        ///</summary>
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException("Ресурсы освобождены");
+            }
+        }
+        ///<summary>
         /// Итератор 
         ///</summary>
         private IEnumerator<T> _iterator;
@@ -50,79 +121,15 @@ namespace test
         ///</summary>
         object IEnumerator.Current => Current;
         ///<summary>
-        /// Коструктор класса MyWhereIterator устанавливающий начальные значениия
+        /// Освобожден ли ресурс
         ///</summary>
-        ///<param name="source">
-        /// Источник типа IEnumerable
-        ///</param>
-        ///<param name="func">
-        /// Делагат принимающий T и возвращающий bool
-        ///</param>
-        public MyWhereIterator(IEnumerable<T> source, Func<T, bool> func)
-        {
-            _iterator = source.GetEnumerator();
-            _func = func;
-        }
-        ///<summary>
-        /// Метод освобождения памяти
-        ///</summary>
-        public void Dispose()
-        {
-            _iterator.Dispose();
-        }
-        ///<summary>
-        /// Метод возвращающий итератор
-        ///</summary>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return this;
-        }
-        ///<summary>
-        /// Метод перемещения между значениями
-        ///</summary>
-        public bool MoveNext()
-        {
-            while (_iterator.MoveNext())
-            {
-                if (_func(_iterator.Current))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        ///<summary>
-        /// Метод приводящий итератор в начальное значение
-        ///</summary>
-        public void Reset()
-        {
-            _iterator.Reset();
-        }
-        ///<summary>
-        /// 
-        ///</summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this;
-        }
+        private bool _disposed;
     }
     ///<summary>
     /// Собственный итератор для Take
     ///</summary>
     public class MyTakeIterator<T> : IEnumerable<T>, IEnumerator<T>
     {
-        ///<summary>
-        /// Итератор 
-        ///</summary>
-        private IEnumerator<T> _iterator;
-        ///<summary>
-        /// Лямбда возвращающая текущее значение
-        ///</summary>
-        public T Current => _iterator.Current;
-        ///<summary>
-        /// Лямбда возвращающая текущее значение в object
-        ///</summary>
-        object IEnumerator.Current => Current;
         ///<summary>
         /// Коструктор класса MyWhereIterator устанавливающий начальные значениия
         ///</summary>
@@ -136,6 +143,7 @@ namespace test
         {
             _iterator = source.GetEnumerator();
             _count = count;
+            _disposed = false;
         }
         ///<summary>
         /// Метод освобождения памяти
@@ -143,12 +151,14 @@ namespace test
         public void Dispose()
         {
             _iterator.Dispose();
+            _disposed = true;
         }
         ///<summary>
         /// Метод возвращающий итератор
         ///</summary>
         public IEnumerator<T> GetEnumerator()
         {
+            ThrowIfDisposed();
             return this;
         }
         ///<summary>
@@ -156,6 +166,7 @@ namespace test
         ///</summary>
         public bool MoveNext()
         {
+            ThrowIfDisposed();
             return (_iterator.MoveNext() && _tempcount++ != _count);
         }
         ///<summary>
@@ -163,6 +174,7 @@ namespace test
         ///</summary>
         public void Reset()
         {
+            ThrowIfDisposed();
             _tempcount = 0;
             _iterator.Reset();
         }
@@ -171,8 +183,31 @@ namespace test
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
+            ThrowIfDisposed();
             return this;
         }
+        ///<summary>
+        /// Проверка освобождены ли ресурсы
+        ///</summary>
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException("Ресурсы освобождены");
+            }
+        }
+        ///<summary>
+        /// Итератор 
+        ///</summary>
+        private IEnumerator<T> _iterator;
+        ///<summary>
+        /// Лямбда возвращающая текущее значение
+        ///</summary>
+        public T Current => _iterator.Current;
+        ///<summary>
+        /// Лямбда возвращающая текущее значение в object
+        ///</summary>
+        object IEnumerator.Current => Current;
         ///<summary>
         /// Количество значений всего
         ///</summary>
@@ -181,6 +216,10 @@ namespace test
         /// Текущее количетсво значений
         ///</summary>
         private int _tempcount;
+        ///<summary>
+        /// Освобожден ли ресурс
+        ///</summary>
+        private bool _disposed;
     }
     ///<summary>
     /// Класс с своими расширениями
@@ -201,8 +240,8 @@ namespace test
         ///</exception>
         public static IEnumerable<TSource> MyWhere<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source == null) throw new ArgumentNullException("Source null");
-            if (predicate == null) throw new ArgumentNullException("Predicate null");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
             return new MyWhereIterator<TSource>(source, predicate);
         }
         ///<summary>
@@ -219,8 +258,8 @@ namespace test
         ///</exception>
         public static IEnumerable<TSource> MyTake<TSource>(this IEnumerable<TSource> source, int count)
         {
-            if (source == null) throw new ArgumentNullException("Source null");
-            if (count == default) throw new ArgumentNullException("Count = 0");
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (count <= 0) throw new ArgumentException(nameof(count));
             return new MyTakeIterator<TSource>(source, count);
         }
     }
