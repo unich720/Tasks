@@ -87,7 +87,7 @@ namespace test
             _iterator.Reset();
         }
         ///<summary>
-        /// 
+        /// Метод возвращающий итератор
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -179,7 +179,7 @@ namespace test
             _iterator.Reset();
         }
         ///<summary>
-        /// 
+        /// Воозвращение Enumerator
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
