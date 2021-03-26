@@ -87,7 +87,6 @@ namespace test
         Func<TA, TB, TKey, TResult> projection)
         {
             var alookup = a.ToLookup(selectKeyA);
-            var blookup = b.ToLookup(selectKeyB);
             HashSet<TKey> allKey = new HashSet<TKey>();
             foreach (var item in b)
             {
