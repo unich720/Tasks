@@ -34,6 +34,10 @@ namespace test
     public class MyWhereIterator<T> : IEnumerable<T>, IEnumerator<T>
     {
         ///<summary>
+        /// Лямбда возвращающая текущее значение
+        ///</summary>
+        public T Current => _iterator.Current;
+        ///<summary>
         /// Коструктор класса MyWhereIterator устанавливающий начальные значениия
         ///</summary>
         ///<param name="source">
@@ -60,7 +64,6 @@ namespace test
         ///</summary>
         public IEnumerator<T> GetEnumerator()
         {
-            ThrowIfDisposed();
             return this;
         }
         ///<summary>
@@ -91,7 +94,6 @@ namespace test
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            ThrowIfDisposed();
             return this;
         }
         ///<summary>
@@ -113,10 +115,6 @@ namespace test
         ///</summary>
         private Func<T, bool> _func;
         ///<summary>
-        /// Лямбда возвращающая текущее значение
-        ///</summary>
-        public T Current => _iterator.Current;
-        ///<summary>
         /// Лямбда возвращающая текущее значение в object
         ///</summary>
         object IEnumerator.Current => Current;
@@ -130,6 +128,10 @@ namespace test
     ///</summary>
     public class MyTakeIterator<T> : IEnumerable<T>, IEnumerator<T>
     {
+        ///<summary>
+        /// Лямбда возвращающая текущее значение
+        ///</summary>
+        public T Current => _iterator.Current;
         ///<summary>
         /// Коструктор класса MyWhereIterator устанавливающий начальные значениия
         ///</summary>
@@ -158,7 +160,6 @@ namespace test
         ///</summary>
         public IEnumerator<T> GetEnumerator()
         {
-            ThrowIfDisposed();
             return this;
         }
         ///<summary>
@@ -183,7 +184,6 @@ namespace test
         ///</summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            ThrowIfDisposed();
             return this;
         }
         ///<summary>
@@ -200,10 +200,6 @@ namespace test
         /// Итератор 
         ///</summary>
         private IEnumerator<T> _iterator;
-        ///<summary>
-        /// Лямбда возвращающая текущее значение
-        ///</summary>
-        public T Current => _iterator.Current;
         ///<summary>
         /// Лямбда возвращающая текущее значение в object
         ///</summary>
